@@ -5,15 +5,16 @@ import axios from 'axios';
 
 const ROOT_URL = 'https://us-central1-one-time-password-fba7b.cloudfunctions.net';
 
-class SignUpForm extends Component {
-  state = { phone: '' };
+class SignInForm extends Component {
+  state = { phone: '', code: '' };
 
   // declaring a function this fat arrow way in a class binds the 'this' context
   handleSubmit = async () => {
-    const { phone } = this.state;
+    const { phone, code } = this.state;
     try {
-      await axios.post(`${ROOT_URL}/createUser`, { phone });
-      await axios.post(`${ROOT_URL}/requestOneTimePassword`, { phone });
+      let response = await axios.post(`${ROOT_URL}/verifyOneTimePassword`, {
+        phone, code });
+      console.log(response);
     } catch (err) {
       console.log(err, err.response.data);
     }
@@ -29,10 +30,19 @@ class SignUpForm extends Component {
             onChangeText={phone => this.setState({ phone })}
           />
         </View>
+
+        <View style={{ marginBottom: 10 }}>
+          <FormLabel>Enter Code</FormLabel>
+          <FormInput
+            value={this.state.code}
+            onChangeText={code => this.setState({ code })}
+          />
+        </View>
+
         <Button title="Submit" onPress={this.handleSubmit} />
       </View>
     );
   }
 }
 
-export default SignUpForm;
+export default SignInForm;
